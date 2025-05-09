@@ -22,8 +22,8 @@ export const ProductModel = {
     const { name, price, categoryID } = product;
     const id = uuidv4();
     const [result] = await db.query(
-      "INSERT INTO products (id, name, price, categoryID) VALUES (id, ?, ?, ?)",
-      [name, price, categoryID]
+      "INSERT INTO products (id, name, price, categoryID) VALUES (?, ?, ?, ?)",
+      [id, name, price, categoryID]
     );
     return `Product ${name} created successfully`;
   },

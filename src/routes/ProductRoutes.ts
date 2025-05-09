@@ -7,24 +7,27 @@ const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
   try {
-    let products;
-    if (req.params.id) {
-      const { id } = req.params;
-      if (!isUuid(id)) {
-        res.status(400).json({ error: "Invalid UUID format" });
-        return;
-      }
-      products = await ProductModel.getById(id);
-      if (!products) {
-        res.status(404).json({ message: "Product not found" });
-        return;
-      }
-    } else {
-      products = await ProductModel.getAll();
-    }
-
+    const products = await ProductModel.getAll();
     res.status(200).json(products);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err });
+  }
+});
+
+router.get("/:id", async (req: Request<Params>, res: Response) => {
+  const id = req.params.id;
+  if (!isUuid(id)) {
+    res.status(400).json({ error: "Invalid UUID format" });
     return;
+  }
+
+  try {
+    const product = await ProductModel.getById(id);
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+    res.status(200).json(product);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err });
   }
